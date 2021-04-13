@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://thymeleaf.org">
+<head>
+<meta charset="ISO-8859-1">
+<title>Your Budgets</title>
+<script th:include="fragments/header :: headerScripts" th:remove="tag"></script>
+</head>
+<body>
+ 
+	<div class="card">
+		<div class="card-header">
+		<div class="row">
+		<div class="h2 col-10">Featured</div>
+		<div class="col-2">
+		<i id="addBudget" class="fas fa-plus-circle fa-2x"  style="cursor: pointer;"></i>
+		</div>
+		</div>
+		
+		</div>
+		<div class="list-group list-group-flush" th:each="budget : ${budgets}">
+			<a th:href="@{/budgets/{budgetId}(budgetId=${budget.id})}" class="list-group-item list-group-item-action" th:text="${budget.name}">Example budget</a>
+		</div>
+	</div>
+
+<script th:include="fragments/header :: footerScripts" th:remove="tag"></script>
+	     <script type="text/javascript">
+      $(function () {
+        $("#addBudget").click(function () {
+          $.ajax({
+        	  url: '/budgets',
+        	  method: 'post',
+        	  dataType: 'json',
+        	  success : function (data) {
+        		console.log(data);
+        		location.reload();
+        	  },
+        	  error : function () {
+        		console.log("There was an error creating a new budget");  
+        	  }
+          });
+        });
+      });
+    </script>
+</body>
+</html>

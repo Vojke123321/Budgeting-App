@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html xmlns:th="http://thymeleaf.org">
+<head>
+<meta charset="ISO-8859-1">
+<title>Your Category</title>
+<script th:include="fragments/header :: headerScripts" th:remove="tag"></script>
+<link rel="stylesheet" href="/css/jquery-ui.css" />
+</head>
+<body>
+
+	<div class="card">
+		<div class="card-header">
+			<div class="row">
+				<nav aria-label="breadcrumb">
+					<ol class="breadcrumb h3">
+						<li class="breadcrumb-item"><a href="/budgets">Budgets</a></li>
+						<li class="breadcrumb-item"><a
+							th:href="@{/budgets/{budgetId}(budgetId=${budget.id})}"
+							th:text="${budget.name}"></a></li>
+						<li class="breadcrumb-item active" aria-current="page">new
+							Transcation</li>
+					</ol>
+				</nav>
+
+			</div>
+		</div>
+
+		<div class="card-body">
+			<form method="post">
+				<input type="hidden" th:field="${transaction.id}"> <input
+					type="hidden" th:field="${transaction.budget}">
+				<div class="form-group row">
+					<label for="date" class="col-sm-2 col-form-label form-control-lg">Transaction
+						Date:</label>
+					<div class="col-sm-10">
+						<input type="date" class="form-control form-control-lg"
+							th:field="${transaction.date}" />
+					</div>
+				</div>
+
+				<div class="input-group row">
+					<label for="total" class="col-sm-2 col-form-label form-control-lg">Transcation
+						Amout:</label>
+					<div class="input-group-prepend">
+						<span class="input-group-text">$</span>
+					</div>
+					<input type="number" step=".01"
+						class="form-control form-control-lg" placeholder="100.00"
+						th:field="${transaction.total}" />
+				</div>
+
+				<div class="input-group row">
+					<label for="category-name"
+						class="col-sm-2 col-form-label form-control-lg">Category:
+					</label> <input type="text" class="form-control form-control-lg"
+						id="category-name" name="category-name" /> <input type="hidden"
+						th:field="${transaction.category}" />
+
+				</div>
+
+				<div class="form-group row">
+					<label for="Note" class="col-sm-2 col-form-label form-control-lg">Notes:</label>
+					<div class="col-sm-10">
+						<input type="text" maxlength="300"
+							class="form-control form-control-lg"
+							placeholder="(not required)insert any notes about your transcation here"
+							th:field="${transaction.note}" />
+					</div>
+				</div>
+
+				<button class="btn btn-primary btn-lg" type="submit">Save</button>
+
+			</form>
+
+		</div>
+	</div>
+	<script th:include="fragments/header :: footerScripts" th:remove="tag"></script>
+	<script src="https://code.jquery.com/ui/1.12.0/jquery-ui.min.js"
+		integrity="sha256-eGE6blurk5sHj+rmkfsGYeKyZx3M4bG+ZlFyA7Kns7E="
+		crossorigin="anonymous"></script>
+
+	<script th:inline="javascript">
+		$(function() {
+			let categories = /*[[${categories}]]*/[];
+			let categoryValue=$("#category").val();
+			
+			if(categoryValue != null){
+				 for(let i=0;i<categories.length;i++){
+					 if(categoryValue==categories[i].value)
+						 $("#category-name").val(categories[i].label)
+				 }
+			}
+			
+			$("#category-name").autocomplete({
+				source : categories,
+				focus : function(event, ui) {
+					$("#category-name").val(ui.item.label);
+					return false;
+				},
+				select : function(event, ui) {
+					$("#category-name").val(ui.item.label);
+					$("#category").val(ui.item.value);
+					return false;
+				}
+
+			})
+		});
+	</script>
+</body>
+</html>

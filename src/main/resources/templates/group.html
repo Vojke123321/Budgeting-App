@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://thymeleaf.org">
+<head>
+<meta charset="ISO-8859-1">
+<title>Your Group</title>
+<script th:include="fragments/header :: headerScripts" th:remove="tag"></script>
+</head>
+<body>
+
+	<div class="card">
+		<div class="card-header">
+			<div class="row">
+				<nav aria-label="breadcrumb">
+					<ol class="breadcrumb h3">
+						<li class="breadcrumb-item"><a href="/budgets">Budgets</a></li>
+						<li class="breadcrumb-item" aria-current="page"><a
+							th:href="@{/budgets/{budgetId}(budgetId=${group.budget.id})}"
+							th:text="${group.budget.name}"></a></li>
+						<li class="breadcrumb-item active" aria-current="page"
+							th:text="${#strings.isEmpty(group.name) ? 'new Group':group.name}"></li>
+					</ol>
+				</nav>
+
+			</div>
+		</div>
+
+		<div class="card-body">
+		<form method="post">
+			<div class="form-group row">
+				<label for="name" class="col-sm-2 col-form-label form-control-lg">Name:</label>
+				<div class="col-sm-10">
+					<input type="text" class="form-control form-control-lg" placeholder="Group Name" th:field="${group.name}" />
+				</div>
+			</div>
+			
+			<button class="btn btn-primary btn-lg" type="submit">Save</button>
+			
+		</form>
+		</div>
+
+	</div>
+	<script th:include="fragments/header :: footerScripts" th:remove="tag"></script>
+
+</body>
+</html>

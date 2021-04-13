@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html xmlns:th="http://thymeleaf.org">
+<head>
+<meta charset="ISO-8859-1">
+<title>Your Category</title>
+<script th:include="fragments/header :: headerScripts" th:remove="tag"></script>
+</head>
+<body>
+
+	<div class="card">
+		<div class="card-header">
+			<div class="row">
+				<div class="col-10 col-md-11">
+					<nav aria-label="breadcrumb">
+						<ol class="breadcrumb h3">
+							<li class="breadcrumb-item"><a href="/budgets">Budgets</a></li>
+							<li class="breadcrumb-item"><a
+								th:href="@{/budgets/{budgetId}(budgetId=${group.budget.id})}"
+								th:text="${group.budget.name}"></a></li>
+							<li class="breadcrumb-item"><a
+								th:href="@{/budgets/{budgetId}/groups/{groupId}(budgetId=${group.budget.id},groupId=${group.id})}"
+								th:text="${#strings.isEmpty(group.name) ? 'New Group' : group.name}"></a></li>
+							<li class="breadcrumb-item active" aria-current="page"
+								th:text="${category.name}"></li>
+						</ol>
+					</nav>
+				</div>
+				<div class="col-2 col-md-1">
+					<form id="addTranscationForm"
+						th:action="@{/budgets/{budgetId}/groups/{groupId}/categories/{categoryId}/transactions(budgetId=${group.budget.id},groupId=${group.id},categoryId=${category.id})}"
+						method="post">
+						<i id="addTransaction" class="fas fa-plus-circle fa-2x"  style="cursor: pointer;"></i>
+					</form>
+				</div>
+			</div>
+				<div class="alert alert-light link" role="alert" id="dateRange">
+				<span class="h5" th:inline="text" id="startDate">
+					[[${#temporals.format(category.group.budget.startDate,'MMMM d, yyyy')}]] - </span> <span
+					class="h5" th:inline="text" id="endDate">
+					[[${#temporals.format(category.group.budget.endDate,'MMMM d, yyyy')}]] </span>
+			</div>
+		</div>
+
+		<div class="card-body">
+			<form method="post">
+				<input type="hidden" th:field="${category.id}">
+				<div class="form-group row">
+					<label for="name" class="col-sm-2 col-form-label form-control-lg">Name:</label>
+					<div class="col-sm-10">
+						<input type="text" class="form-control form-control-lg"
+							placeholder="Category Name" th:field="${category.name}" />
+					</div>
+				</div>
+
+				<div class="input-group row">
+					<label for="budget" class="col-sm-2 col-form-label form-control-lg">Budget
+						Amout:</label>
+					<div class="input-group-prepend">
+						<span class="input-group-text">$</span>
+					</div>
+					<input type="number" step=".01"
+						class="form-control form-control-lg" placeholder="100.00"
+						th:field="${category.budget}" />
+				</div>
+
+				<button class="btn btn-primary btn-lg" type="submit">Save</button>
+
+			</form>
+		</div>
+	</div>
+
+	<div class="card">
+		<div class="card-body">
+			<table class="table">
+				<thead>
+					<tr>
+						<th scope="col">Date</th>
+						<th scope="col">Category</th>
+						<th scope="col">Amount</th>
+						<th scope="col">Notes</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="transaction : ${filteredTxns}"
+						style="cursor: pointer;" th:id="|transaction-${transaction.id}|">
+						<td th:text="${#temporals.format(transaction.date, 'MMM-dd')}"></td>
+						<td th:text="${category.name}"></td>
+						<td th:if="${transaction.total != null}"
+							th:text="|$${#numbers.formatDecimal(transaction.total, 0, 'COMMA', 2, 'POINT')}|"></td>
+						<td th:if="${transaction.total == null}">$0.00</td>
+						<td th:text="${transaction.note}"></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+	<script th:include="fragments/header :: footerScripts" th:remove="tag"></script>
+	<script th:inline="javascript">
+		var budgetId = /*[[${group.budget.id}]]*/0;
+		var categoryId = /*[[${category.id}]]*/0;
+		var groupId = /*[[${group.id}]]*/0;
+
+		$(function() {
+			$("tr[id*='transaction-']")
+					.click(
+							function() {
+								var transactionId = $(this).prop('id').split(
+										'-')[1];
+
+								window.location.href = '/budgets/' + budgetId
+										+ '/groups/' + groupId + '/categories/'
+										+ categoryId + '/transactions/'
+										+ transactionId;
+							});
+
+			$("#addTransaction").click(function() {
+				$("#addTranscationForm").submit();
+			});
+		});
+	</script>
+</body>
+</html>
